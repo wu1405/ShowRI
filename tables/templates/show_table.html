@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>reserved</title>
+    <!-- CDN
+    <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
+    -->
+
+    <!-- local -->
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/DataTables-1.10.7/media/css/jquery.dataTables.css">
+
+
+	<!-- bootstrap -->
+	<link  type="text/css" href="/static/bootstrap-2.3.2/bootstrap.min.css" rel="stylesheet">
+	<link  type="text/css" href="/static/bootstrap-2.3.2/bootstrap-responsive.min.css" rel="stylesheet">
+
+
+    <!-- jQuery -->
+    <script type="text/javascript" charset="utf8" src="/static/DataTables-1.10.7/media/js/jquery.js"></script>  
+    <!-- DataTables -->
+    <script type="text/javascript" charset="utf8" src="/static/DataTables-1.10.7/media/js/jquery.dataTables.js"></script>
+
+<!--
+	<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+-->
+
+    <script>
+//    $(document).ready( function () {
+//        $('#table_id').DataTable();
+//    } );
+
+$(document).ready(function() {
+    $('#table_id').DataTable( {
+        initComplete: function () {
+            var api = this.api();
+            api.columns().indexes().flatten().each( function ( i ) {
+				if (i==0||i==1||i==2){
+                var column = api.column( i );
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+		
+				}
+		
+            } );
+        }
+    } );
+} );
+
+
+    </script>
+
+</head>
+
+<body>
+<div style="margin:0 auto;text-align:center;padding-top:20px;">
+	<a href="http://yourdomain/tables/ri/accounts=account1-account2/" class="btn btn-primary btn-lg active" role="button">click to update data</a>
+<!--We have multi accounts. split with '-' -->
+</div>
+
+<table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="85%">
+    <thead>
+        <tr>
+            <th>account</th>
+            <th>region</th>
+            <th>type</th>
+            <th>ri_num</th>
+            <th>used_num</th>
+            <th>delta(ri - used)</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>account</th>
+            <th>region</th>
+            <th>type</th>
+            <th>ri_num</th>
+            <th>used_num</th>
+            <th>delta(ri-used)</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for res in results %}
+        <tr>
+            <td>{{res.account}}</td>
+            <td>{{res.region}}</td>
+            <td>{{res.type}}</td>
+            <td>{{res.ri_num}}</td>
+            <td>{{res.used_num}}</td>
+            <td>{{res.delta}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+</body>
+</html>
